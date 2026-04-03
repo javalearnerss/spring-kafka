@@ -1,0 +1,10 @@
+{
+    "type" : "record",
+    "name" : "Employee",
+    "namespace" : "com.learn.kafka.schema.registry.model",
+    "fields" : [
+        { "name" : "empId", "type" : "string" },
+        { "name" : "name", "type" : "string" },
+        { "name" : "age", "type" : "int" }
+    ]
+}
