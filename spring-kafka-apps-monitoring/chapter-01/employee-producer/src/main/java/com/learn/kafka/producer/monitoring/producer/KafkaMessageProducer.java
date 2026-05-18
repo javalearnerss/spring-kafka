@@ -42,18 +42,17 @@ public class KafkaMessageProducer<K, V> {
      * @param message the value of the message to be sent to Kafka
      */
     public void send(String topic, K key, V message) {
+        producerMetrics.increment(application, producerName, topic, "sent");
         CompletableFuture<SendResult<K, V>> response = kafkaTemplate.send(topic, key, message);
         new KafkaCallbackHandler<>(response)
                 .onSuccess(result -> {
-                    producerMetrics.increment(application, producerName, topic, "sent");
                     producerMetrics.increment(application, producerName, topic, "success");
-                    LOGGER.info("Message sent topic={} partition={} offset={} key={} payload={}",
+                    LOGGER.info("Event acknowledged : success, topic={} partition={} offset={} key={} payload={}",
                             result.getRecordMetadata().topic(), result.getRecordMetadata().partition(), result.getRecordMetadata().offset(), key, message);
                 })
                 .onFailure(ex -> {
-                    producerMetrics.increment(application, producerName, topic, "sent");
                     producerMetrics.increment(application, producerName, topic, "failure");
-                    LOGGER.error("Unable to send message topic={} key={} payload={} due to {}", topic, key, message, ex.toString());
+                    LOGGER.error("Event acknowledged : failure, Unable to send message topic={} key={} payload={} due to {}", topic, key, message, ex.toString());
                 });
     }
 

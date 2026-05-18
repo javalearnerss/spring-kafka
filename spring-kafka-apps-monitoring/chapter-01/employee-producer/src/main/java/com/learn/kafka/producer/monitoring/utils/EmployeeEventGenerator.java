@@ -52,12 +52,12 @@ public class EmployeeEventGenerator {
 
     public void stop() {
         enabled.set(false);
-        LOGGER.info("Employee generator stopped");
+        LOGGER.info("Kafka producer event generation stopped");
     }
 
     public void start() {
         enabled.set(true);
-        LOGGER.info("Employee generator started");
+        LOGGER.info("Kafka producer event generation started");
     }
 
     /**
@@ -74,15 +74,15 @@ public class EmployeeEventGenerator {
 
         Employee employee = generateEmployee();
         try {
+            LOGGER.info("Publishing employee event topic={} employee={}", topic, employee);
             simulateFailure(employee);
             producer.send(topic, employee.empId(), objectMapper.writeValueAsString(employee));
-            LOGGER.info("Employee event sent to topic, employee={}, topic={}", employee, topic);
+            LOGGER.info("Employee event published topic={} employee={}", topic, employee);
         } catch (Exception e) {
             producerMetrics.increment(application, producerName, topic, "sent");
             producerMetrics.increment(application, producerName, topic, "failure");
-            LOGGER.error("Failed to publish employee event", e);
+            LOGGER.error("Failed to publish employee event topic={} employee={} reason={}", topic, employee, e.getMessage(), e);
         }
-        LOGGER.info("Employee event published employee={}, topic={}", employee, topic);
     }
 
     private Employee generateEmployee() {
@@ -109,6 +109,6 @@ public class EmployeeEventGenerator {
 
     @PreDestroy
     public void shutdown() {
-        LOGGER.info("Shutting down employee generator");
+        LOGGER.info("Shutting down Kafka employee event generator");
     }
 }
