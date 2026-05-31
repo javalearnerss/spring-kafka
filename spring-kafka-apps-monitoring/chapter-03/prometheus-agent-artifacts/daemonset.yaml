@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: prometheus-metrics-agent
+  namespace: observability
+
+  labels:
+    app.kubernetes.io/name: prometheus-metrics-agent
+    app.kubernetes.io/component: metrics-scraper
+    app.kubernetes.io/part-of: observability
+
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-metrics-agent
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: prometheus-metrics-agent
+        app.kubernetes.io/component: metrics-scraper
+        app.kubernetes.io/part-of: observability
+
+    spec:
+
+      serviceAccountName: prometheus-metrics-agent-sa
+
+      containers:
+        - name: prometheus-metrics-agent
+
+          image: prom/prometheus:v3.5.0
+
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --enable-feature=agent
+
+          ports:
+            - name: web
+              containerPort: 9090
+
+          volumeMounts:
+            - name: prometheus-config
+              mountPath: /etc/prometheus
+
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: prometheus-metrics-agent-config

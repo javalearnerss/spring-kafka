@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-metrics-agent-config
+  namespace: observability
+
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 1s
+
+      external_labels:
+        cluster: docker-desktop
+        environment: dev
+        prometheus_agent: docker-desktop-agent
+
+    scrape_configs:
+
+      - job_name: kubernetes-pods
+
+        kubernetes_sd_configs:
+          - role: pod
+
+        relabel_configs:
+
+          # scrape only annotated pods
+          - source_labels:
+              [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+
+          # set metrics path
+          - source_labels:
+              [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+
+          # set target port dynamically
+          - source_labels:
+              [__address__,
+               __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+
+          # add pod label
+          - source_labels:
+              [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+
+          # add namespace label
+          - source_labels:
+              [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+
+          # add app label
+          - source_labels:
+              [__meta_kubernetes_pod_label_app]
+            action: replace
+            target_label: app
+
+          # add version label
+          - source_labels:
+              [__meta_kubernetes_pod_label_version]
+            action: replace
+            target_label: version
+          
+
+    remote_write:
+      - url: http://host.docker.internal:9090/api/v1/write
