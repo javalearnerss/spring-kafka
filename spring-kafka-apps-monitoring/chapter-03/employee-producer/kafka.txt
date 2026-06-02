@@ -2,7 +2,7 @@
 
 .\bin\windows\kafka-storage.bat random-uuid
 
-.\bin\windows\kafka-storage.bat format -t 3I5CFLMCSsSA2gExD7QF5w -c .\config\kraft\server.properties
+.\bin\windows\kafka-storage.bat format -t 3I5CFLMCSsSA2gExD7QF59 -c .\config\kraft\server.properties
 
 
 

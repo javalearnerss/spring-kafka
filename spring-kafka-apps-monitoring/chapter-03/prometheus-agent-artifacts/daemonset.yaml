@@ -32,7 +32,7 @@ spec:
 
           args:
             - --config.file=/etc/prometheus/prometheus.yml
-            - --enable-feature=agent
+            - --agent
 
           ports:
             - name: web
