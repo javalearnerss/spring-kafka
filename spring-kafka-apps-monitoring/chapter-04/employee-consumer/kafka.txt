@@ -1,0 +1,27 @@
+
+
+.\bin\windows\kafka-storage.bat random-uuid
+
+.\bin\windows\kafka-storage.bat format -t xbnuRpAYTWafdLyCnpRBaA -c .\config\kraft\server.properties
+
+
+
+# Start Kafka Server
+.\bin\windows\kafka-server-start.bat .\config\kraft\server-plain.properties
+
+# Create Kafka Topic
+# Main topic
+.\bin\windows\kafka-topics.bat --create --topic employee --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+
+# Retry Topics
+.\bin\windows\kafka-topics.bat --create --topic employee-retry-0 --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+.\bin\windows\kafka-topics.bat --create --topic employee-retry-1 --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+.\bin\windows\kafka-topics.bat --create --topic employee-retry-2 --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+
+# Dlt Topic
+.\bin\windows\kafka-topics.bat --create --topic employee-dlt --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+
+# Create Kafka Console consumer
+.\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic nse.trade.events --group topic-a-consumer-group --consumer-property client.id=consumer-console-1
+
+
