@@ -1,9 +1,0 @@
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: employee-consumer-config-map
-  namespace: monitoring
-  
-data:
-  SPRING_KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092

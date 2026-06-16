@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: employee-consumer
-  namespace: monitoring
+  namespace: blue
   labels:
     app: employee-consumer
     version: v1
@@ -11,7 +11,7 @@ metadata:
 spec:
   replicas: 1
 
-  strategy: 
+  strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 0
@@ -60,7 +60,7 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "250m"
-            limits: 
+            limits:
               memory: "512Mi"
               cpu: "500m"
 
@@ -93,7 +93,3 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 5
-
-      
-
-
